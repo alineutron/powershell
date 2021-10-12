@@ -1,0 +1,13 @@
+function kubectlx {
+    [CmdletBinding()]
+    param (
+        [string]$ClusterName
+    )
+    kubectl config use-context $ClusterName
+}
+
+Register-ArgumentCompleter -CommandName kubectlx -ParameterName ClusterName -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    $a = kubectl config view -o jsonpath='{.contexts[*].name}'
+    $clusters = $a -split ' '
+    $clusters | Where-Object { $_ -match "$wordToComplete" } 
